@@ -10,6 +10,9 @@ export default {
       type: Number,
       default: 10
     },
+    bounds: {
+      type: Array
+    },
     controls: {
       type: Array,
       default: () => []
@@ -19,6 +22,7 @@ export default {
       default: () => {}
     }
   },
+  emits: ['click', 'update:center', 'update:zoom', 'update:bounds'],
   setup(props, { emit, slots }) {
     const mapId = `map-${Math.random()}`;
 
@@ -45,6 +49,7 @@ export default {
         const newCenter = event.get('newCenter');
         const oldZoom = event.get('oldZoom');
         const newZoom = event.get('newZoom');
+        const newBounds = event.get('newBounds');
 
         if (!ymaps.util.math.areEqual(oldCenter, newCenter)) {
           emit('update:center', newCenter);
@@ -53,6 +58,8 @@ export default {
         if (oldZoom !== newZoom) {
           emit('update:zoom', newZoom);
         }
+
+        emit('update:bounds', newBounds);
       },
       click(event) {
         emit('click', event);
@@ -68,14 +75,12 @@ export default {
       map = new ymaps.Map(
         mapId,
         {
+          bounds: props.bounds,
           center: props.center,
           zoom: props.zoom,
           controls: props.controls
         },
-        {
-          suppressMapOpenBlock: true,
-          ...props.options
-        }
+        props.options
       );
       Object.keys(events).forEach(event => {
         map.events.add(event, events[event]);

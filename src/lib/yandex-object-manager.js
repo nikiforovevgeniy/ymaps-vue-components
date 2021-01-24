@@ -1,4 +1,4 @@
-import { inject, computed, watch, onBeforeUnmount } from 'vue';
+import { inject, watch, onBeforeUnmount } from 'vue';
 
 export default {
   props: {
@@ -8,21 +8,9 @@ export default {
         return [];
       }
     },
-    filter: {
-      type: Function,
-      default: function() {
-        return true;
-      }
-    },
     visible: {
       type: Boolean,
       default: true
-    },
-    fitToViewport: {
-      type: Object,
-      default() {
-        return {};
-      }
     },
     options: {
       type: Object,
@@ -38,13 +26,10 @@ export default {
     const getMap = inject('getMap');
     const map = getMap();
 
-    const fitToViewport = computed(() => {
-      return Object.keys(props.fitToViewport).length;
-    });
-
-    const setBoundsToViewport = () => {
-      const bounds = objectManager.getBounds();
-      if (bounds) map.setBounds(bounds, props.fitToViewport);
+    const events = {
+      click(event) {
+        emit('click', event);
+      }
     };
 
     const objectManager = new ymaps.ObjectManager(props.options);
@@ -52,18 +37,9 @@ export default {
       type: 'FeatureCollection',
       features: props.items
     });
-    objectManager.setFilter(object => {
-      return props.filter(object);
+    Object.keys(events).forEach(event => {
+      objectManager.events.add(event, events[event]);
     });
-
-    if (props.visible) map.geoObjects.add(objectManager);
-
-    if (fitToViewport.value) setBoundsToViewport();
-
-    const onClick = event => {
-      emit('click', event);
-    };
-    objectManager.objects.events.add('click', onClick);
 
     watch(
       () => props.items,
@@ -73,9 +49,6 @@ export default {
           type: 'FeatureCollection',
           features: value
         });
-        if (fitToViewport.value) {
-          setBoundsToViewport();
-        }
       }
     );
 
@@ -87,12 +60,17 @@ export default {
         } else {
           map.geoObjects.remove(objectManager);
         }
+      },
+      {
+        immediate: true
       }
     );
 
     onBeforeUnmount(() => {
       objectManager.removeAll();
-      objectManager.objects.events.remove('click', onClick);
+      Object.keys(events).forEach(event => {
+        objectManager.events.remove(event, events[event]);
+      });
       map.geoObjects.remove(objectManager);
     });
 

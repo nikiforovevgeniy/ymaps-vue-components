@@ -6,14 +6,6 @@ export default {
       type: Array,
       required: true
     },
-    fitToViewport: {
-      type: Boolean,
-      default: false
-    },
-    edit: {
-      type: Boolean,
-      default: false
-    },
     properties: {
       type: Object,
       default: () => {}
@@ -21,8 +13,17 @@ export default {
     options: {
       type: Object,
       default: () => {}
+    },
+    edit: {
+      type: Boolean,
+      default: false
+    },
+    draw: {
+      type: Boolean,
+      default: false
     }
   },
+  emits: ['update:coord', 'dragend', 'vertexadd', 'vertexdragend'],
   setup(props, { emit }) {
     const getYmaps = inject('getYmaps');
     const ymaps = getYmaps();
@@ -30,41 +31,66 @@ export default {
     const getMap = inject('getMap');
     const map = getMap();
 
-    const setBoundsToViewport = () => {
-      const bounds = polygon.geometry.getBounds();
-      map.setBounds(bounds);
-    };
-
-    const polygon = new ymaps.Polygon(props.coord, props.properties, props.options);
-    map.geoObjects.add(polygon);
-    if (props.fitToViewport) setBoundsToViewport();
-
-    const editorEvents = {
-      vertexadd(event) {
-        emit('vertexAdd', event);
+    const events = {
+      click(event) {
+        emit('click', event);
       },
-      vertexdragend(event) {
-        emit('vertexDragEnd', event);
+      dragend(event) {
+        const coord = event.get('target').geometry.getCoordinates();
+        emit('update:coord', coord);
+        emit('dragend', event);
+      },
+      optionschange(event) {
+        const options = event.get('target').options.getAll();
+        emit('update:options', options);
+        emit('optionschange', event);
+      },
+      propertieschange(event) {
+        const options = event.get('target').properties.getAll();
+        emit('update:properties', options);
+        emit('propertieschange', event);
+      },
+      editor_vertexadd(event) {
+        const coord = event.get('target').geometry.getCoordinates();
+        emit('update:coord', coord);
+        emit('vertexadd', event);
+      },
+      editor_vertexdragend(event) {
+        const coord = event.get('target').geometry.getCoordinates();
+        emit('update:coord', coord);
+        emit('vertexdragend', event);
       }
     };
 
-    const addEditorEvents = () => {
-      Object.keys(editorEvents).forEach(event => {
-        polygon.editor.events.add(event, editorEvents[event]);
-      });
-    };
-
-    const removeEditorEvents = () => {
-      Object.keys(editorEvents).forEach(event => {
-        polygon.editor.events.add(event, editorEvents[event]);
-      });
-    };
+    const polygon = new ymaps.Polygon(props.coord, props.properties, props.options);
+    Object.keys(events).forEach(event => {
+      if (/^editor_/.test(event)) {
+        const eventName = event.replace(/^editor_/, '');
+        polygon.editor.events.add(eventName, events[event]);
+      } else {
+        polygon.events.add(event, events[event]);
+      }
+    });
+    map.geoObjects.add(polygon);
 
     watch(
       () => props.coord,
       value => {
         polygon.geometry.setCoordinates(value);
-        if (props.fitToViewport) setBoundsToViewport();
+      }
+    );
+
+    watch(
+      () => ({ ...props.options }),
+      value => {
+        polygon.options.set(value);
+      }
+    );
+
+    watch(
+      () => ({ ...props.properties }),
+      value => {
+        polygon.properties.set(value);
       }
     );
 
@@ -73,12 +99,22 @@ export default {
       value => {
         if (value) {
           polygon.editor.startEditing();
-          polygon.editor.startDrawing();
-          addEditorEvents();
         } else {
           polygon.editor.stopEditing();
+        }
+      },
+      {
+        immediate: true
+      }
+    );
+
+    watch(
+      () => props.draw,
+      value => {
+        if (value) {
+          polygon.editor.startDrawing();
+        } else {
           polygon.editor.stopDrawing();
-          removeEditorEvents();
         }
       },
       {
@@ -87,7 +123,14 @@ export default {
     );
 
     onBeforeUnmount(() => {
-      removeEditorEvents();
+      Object.keys(events).forEach(event => {
+        if (/^editor_/.test(event)) {
+          const eventName = event.replace(/^editor_/, '');
+          polygon.editor.events.remove(eventName, events[event]);
+        } else {
+          polygon.events.remove(event, events[event]);
+        }
+      });
       map.geoObjects.remove(polygon);
     });
 
