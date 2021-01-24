@@ -19,7 +19,15 @@ export default {
       default: () => {}
     }
   },
-  emits: ['update:coord', 'update:options', 'dragend', 'click', 'optionschange'],
+  emits: [
+    'dragend',
+    'click',
+    'optionschange',
+    'propertieschange',
+    'update:coord',
+    'update:options',
+    'update:properties'
+  ],
   setup(props, { emit }) {
     const getYmaps = inject('getYmaps');
     const ymaps = getYmaps();

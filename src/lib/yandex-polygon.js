@@ -23,7 +23,16 @@ export default {
       default: false
     }
   },
-  emits: ['update:coord', 'dragend', 'vertexadd', 'vertexdragend'],
+  emits: [
+    'update:coord',
+    'update:options',
+    'update:properties',
+    'dragend',
+    'optionschange',
+    'propertieschange',
+    'vertexadd',
+    'vertexdragend'
+  ],
   setup(props, { emit }) {
     const getYmaps = inject('getYmaps');
     const ymaps = getYmaps();
