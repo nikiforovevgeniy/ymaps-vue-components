@@ -1,6 +1,6 @@
 {
   "name": "ymaps-vue-components",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": "Evgeniy Nikiforov <l760@ya.ru>",
   "main": "./dist/ymapsVueComponents.common.js",
   "files": [
