@@ -12,6 +12,19 @@ The library is currently under active development. Components for working with t
 npm install ymaps-vue-components
 ```
 
+```javascript
+// src/main.js
+
+import { createApp } from 'vue';
+import App from './App.vue';
+import ymapsVueComponents from './lib'; // import plugin
+
+const app = createApp(App);
+
+app.use(ymapsVueComponents); // using a plugin
+app.mount('#app');
+```
+
 ## Base usage
 
 ```javascript

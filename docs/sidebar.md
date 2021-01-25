@@ -1,0 +1,6 @@
+- Components
+  - [yandex-maps](yandex-maps.md)
+  - [yandex-map](yandex-map.md)
+  - [yandex-placemark](yandex-placemark.md)
+  - [yandex-polygon](yandex-polygon.md)
+  - [yandex-object-manager](yandex-object-manager.md)

@@ -1,0 +1,3 @@
+# yandex-object-manager
+
+Компонент бла бла бла ...

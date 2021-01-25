@@ -1,14 +1,15 @@
 {
   "name": "ymaps-vue-components",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": "Evgeniy Nikiforov <l760@ya.ru>",
   "main": "./dist/ymapsVueComponents.common.js",
   "files": [
-    "/dist/ymapsVueComponents.common.js"
+    "/dist/ymaps-vue-components.common.js",
+    "/dist/ymaps-vue-components.umd.min.js"
   ],
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --name ymapsVueComponents ./src/lib/index.js",
+    "build": "vue-cli-service build --target lib --name ymaps-vue-components ./src/lib/index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
