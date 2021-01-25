@@ -1,7 +1,11 @@
 {
   "name": "ymaps-vue-components",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": "Evgeniy Nikiforov <l760@ya.ru>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nikiforovevgeniy/ymaps-vue-components"
+  },
   "main": "./dist/ymapsVueComponents.common.js",
   "files": [
     "/dist/ymaps-vue-components.common.js",

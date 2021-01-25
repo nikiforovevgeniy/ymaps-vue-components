@@ -8,9 +8,13 @@ The library is currently under active development. Components for working with t
 
 ## Install
 
+run command
+
 ```bash
 npm install ymaps-vue-components
 ```
+
+add lines "import plugin" and "using a plugin" in your src/main.js file
 
 ```javascript
 // src/main.js
