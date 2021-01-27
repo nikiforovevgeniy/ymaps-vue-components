@@ -56,7 +56,7 @@ export default {
       }
     };
 
-    const placemark = new ymaps.Placemark(props.coord, props.properties, props.options);
+    const placemark = new ymaps.Placemark(props.coord, { ...props.properties }, { ...props.options });
     Object.keys(events).forEach(event => {
       placemark.events.add(event, events[event]);
     });

@@ -71,7 +71,7 @@ export default {
       }
     };
 
-    const polygon = new ymaps.Polygon(props.coord, props.properties, props.options);
+    const polygon = new ymaps.Polygon(props.coord, { ...props.properties }, { ...props.options });
     Object.keys(events).forEach(event => {
       if (/^editor_/.test(event)) {
         const eventName = event.replace(/^editor_/, '');

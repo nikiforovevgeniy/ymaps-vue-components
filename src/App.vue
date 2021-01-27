@@ -1,17 +1,12 @@
 <template>
   <div class="map-box">
     <yandex-maps>
-      <yandex-map v-model:center="mapCenter" v-model:zoom="mapZoom">
+      <yandex-map v-model:center="mapCenter" v-model:zoom="mapZoom" :options="mapOptions">
         <yandex-placemark v-model:coord="placemarkCoord" :options="placemarkOptions" />
         <yandex-polygon v-model:coord="polygonCoord" :options="{ draggable: true }" edit />
       </yandex-map>
     </yandex-maps>
   </div>
-  <select v-model="placemarkOptions.preset">
-    <option value="islands#blueCircleDotIcon">islands#blueCircleDotIcon</option>
-    <option value="islands#redCircleDotIcon">islands#redCircleDotIcon</option>
-  </select>
-  <pre>{{ placemarkOptions }}</pre>
 </template>
 
 <script>
@@ -21,6 +16,9 @@ export default {
   setup() {
     const mapCenter = ref([58.01045, 56.229434]);
     const mapZoom = ref(10);
+    const mapOptions = reactive({
+      suppressMapOpenBlock: true
+    });
 
     const placemarkCoord = ref([58.01045, 56.229434]);
     const placemarkOptions = reactive({
@@ -41,6 +39,7 @@ export default {
     return {
       mapCenter,
       mapZoom,
+      mapOptions,
       placemarkCoord,
       placemarkOptions,
       polygonCoord

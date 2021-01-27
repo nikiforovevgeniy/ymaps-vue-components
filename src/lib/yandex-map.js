@@ -22,26 +22,12 @@ export default {
       default: () => {}
     }
   },
-  emits: ['click', 'update:center', 'update:zoom', 'update:bounds'],
+  emits: ['click', 'optionschange', 'update:center', 'update:zoom', 'update:bounds', 'update:options'],
   setup(props, { emit, slots }) {
     const mapId = `map-${Math.random()}`;
 
     const getYmaps = inject('getYmaps');
     const ymaps = getYmaps();
-
-    watch(
-      () => props.center,
-      newCenter => {
-        map.setCenter(newCenter);
-      }
-    );
-
-    watch(
-      () => props.zoom,
-      newZoom => {
-        map.setZoom(newZoom);
-      }
-    );
 
     const events = {
       boundschange(event) {
@@ -63,6 +49,11 @@ export default {
       },
       click(event) {
         emit('click', event);
+      },
+      optionschange(event) {
+        const options = event.get('target').options.getAll();
+        emit('update:options', options);
+        emit('optionschange', event);
       }
     };
 
@@ -80,13 +71,34 @@ export default {
           zoom: props.zoom,
           controls: props.controls
         },
-        props.options
+        { ...props.options }
       );
       Object.keys(events).forEach(event => {
         map.events.add(event, events[event]);
       });
       isInit.value = true;
     });
+
+    watch(
+      () => props.center,
+      newCenter => {
+        map.setCenter(newCenter);
+      }
+    );
+
+    watch(
+      () => props.zoom,
+      newZoom => {
+        map.setZoom(newZoom);
+      }
+    );
+
+    watch(
+      () => ({ ...props.options }),
+      value => {
+        map.options.set(value);
+      }
+    );
 
     onBeforeUnmount(() => {
       Object.keys(events).forEach(event => {
