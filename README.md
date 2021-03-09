@@ -21,7 +21,7 @@ add lines "import plugin" and "using a plugin" in your src/main.js file
 
 import { createApp } from 'vue';
 import App from './App.vue';
-import ymapsVueComponents from './lib'; // import plugin
+import ymapsVueComponents from 'ymaps-vue-components'; // import plugin
 
 const app = createApp(App);
 
