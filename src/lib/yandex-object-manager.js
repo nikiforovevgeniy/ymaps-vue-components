@@ -1,4 +1,4 @@
-import { inject, watch, onBeforeUnmount } from 'vue';
+import { computed, inject, watch, onBeforeUnmount } from 'vue';
 
 export default {
   props: {
@@ -8,11 +8,13 @@ export default {
         return [];
       }
     },
-    visible: {
-      type: Boolean,
-      default: true
-    },
     options: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    fitToViewport: {
       type: Object,
       default() {
         return {};
@@ -26,6 +28,17 @@ export default {
     const getMap = inject('getMap');
     const map = getMap();
 
+    const fitToViewport = computed(() => {
+      return Object.keys(props.fitToViewport).length;
+    });
+
+    const setBoundsToViewport = () => {
+      const bounds = objectManager.getBounds();
+      if (bounds) {
+        map.setBounds(bounds, props.fitToViewport);
+      }
+    };
+
     const events = {
       click(event) {
         emit('click', event);
@@ -37,8 +50,10 @@ export default {
       type: 'FeatureCollection',
       features: props.items
     });
+    map.geoObjects.add(objectManager);
+    if (fitToViewport.value) setBoundsToViewport();
     Object.keys(events).forEach(event => {
-      objectManager.events.add(event, events[event]);
+      objectManager.objects.events.add(event, events[event]);
     });
 
     watch(
@@ -49,27 +64,14 @@ export default {
           type: 'FeatureCollection',
           features: value
         });
-      }
-    );
-
-    watch(
-      () => props.visible,
-      value => {
-        if (value && map.geoObjects.indexOf(objectManager) === -1) {
-          map.geoObjects.add(objectManager);
-        } else {
-          map.geoObjects.remove(objectManager);
-        }
-      },
-      {
-        immediate: true
+        if (fitToViewport.value) setBoundsToViewport();
       }
     );
 
     onBeforeUnmount(() => {
       objectManager.removeAll();
       Object.keys(events).forEach(event => {
-        objectManager.events.remove(event, events[event]);
+        objectManager.objects.events.remove(event, events[event]);
       });
       map.geoObjects.remove(objectManager);
     });

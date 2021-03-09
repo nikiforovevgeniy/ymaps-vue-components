@@ -11,9 +11,21 @@
 
 <script>
 import { ref, reactive } from 'vue';
+import { setPreset } from './lib';
 
 export default {
   setup() {
+    setPreset('placemark#default', ymaps => {
+      return {
+        iconLayout: ymaps.templateLayoutFactory.createClass(`<div class='placemark-default'></div>`),
+        iconShape: {
+          type: 'Circle',
+          coordinates: [0, 0],
+          radius: 10
+        }
+      };
+    });
+
     const mapCenter = ref([58.01045, 56.229434]);
     const mapZoom = ref(10);
     const mapOptions = reactive({
@@ -23,7 +35,7 @@ export default {
     const placemarkCoord = ref([58.01045, 56.229434]);
     const placemarkOptions = reactive({
       draggable: true,
-      preset: 'islands#blueCircleDotIcon'
+      preset: 'placemark#default'
     });
 
     const polygonCoord = ref([
@@ -58,5 +70,18 @@ body,
 
 .map-box {
   height: 400px;
+}
+
+.placemark-default {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  top: -10px;
+  left: -10px;
+  border-radius: 50%;
+  background: red;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 }
 </style>

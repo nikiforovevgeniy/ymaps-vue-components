@@ -16,3 +16,13 @@ export default {
     app.component('yandex-object-manager', yandexObjectManager);
   }
 };
+
+const presets = new Map();
+
+export const setPreset = (storageKey, presetFn) => {
+  presets.set(storageKey, presetFn);
+};
+
+export const getPresets = () => {
+  return presets;
+};

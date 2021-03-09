@@ -1,7 +1,9 @@
 let options = {
+  baseUrl: 'https://api-maps.yandex.ru',
   v: '2.1',
   lang: 'ru_RU',
-  coordorder: 'latlong'
+  coordorder: 'latlong',
+  apikey: ''
 };
 let loading = false;
 let wait = [];
@@ -31,9 +33,10 @@ export const load = () => {
         wait = [];
         reject(error);
       };
+      const apiKeyQueryParam = options.apikey ? `apikey=${options.apikey}&` : '';
       scriptTag.setAttribute(
         'src',
-        `https://api-maps.yandex.ru/${options.v}?lang=${options.lang}&coordorder=${options.coordorder}`
+        `${options.baseUrl}/${options.v}?${apiKeyQueryParam}lang=${options.lang}&coordorder=${options.coordorder}`
       );
       document.body.appendChild(scriptTag);
     } else {
@@ -45,9 +48,9 @@ export const load = () => {
   });
 };
 
-export const setOptions = data => {
+export const setOptions = value => {
   options = {
     ...options,
-    ...data
+    ...value
   };
 };

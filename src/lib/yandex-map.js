@@ -3,8 +3,7 @@ import { h, ref, provide, inject, onMounted, watch, onBeforeUnmount } from 'vue'
 export default {
   props: {
     center: {
-      type: Array,
-      required: true
+      type: Array
     },
     zoom: {
       type: Number,
