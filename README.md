@@ -64,3 +64,7 @@ export default {
 }
 </style>
 ```
+
+## Examples
+
+Base usage: https://codesandbox.io/s/ymap-vue-components-base-usage-uzqdw
